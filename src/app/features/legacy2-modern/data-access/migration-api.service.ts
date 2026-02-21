@@ -15,6 +15,8 @@ export class MigrationApiService {
       'Content-Type': 'application/json',
       'X-API-KEY': environment.apiKey,
     });
-    return this.httpClient.post<MigrationResponseDto>(`${apiBaseUrl}/migrate`, request, { headers });
+    return this.httpClient.post<MigrationResponseDto>(`${apiBaseUrl}/migrate`, request, {
+      headers,
+    });
   }
 }
