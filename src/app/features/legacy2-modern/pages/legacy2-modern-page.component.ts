@@ -1,13 +1,13 @@
+import type { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { MigrationApiService } from '../data-access/migration-api.service';
 import type {
   MigrateRequestDto,
-  ReportDto,
   MigrationResponseDto,
+  ReportDto,
   SourceLanguage,
   TargetLanguage,
 } from '../domain/migration.models';
