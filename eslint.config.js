@@ -87,7 +87,7 @@ module.exports = defineConfig([
     plugins: { jest },
     languageOptions: {
       globals: jest.environments.globals.globals,
-    },  
+    },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
