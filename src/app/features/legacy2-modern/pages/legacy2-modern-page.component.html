@@ -52,7 +52,9 @@
       </div>
 
       <div class="actions">
-        <button data-testid="migrate-btn" type="submit" [disabled]="isLoading()">Migrate</button>
+        <button data-testid="migrate-btn" type="submit" [disabled]="isLoading()">
+          {{ isLoading() ? 'Migrating...' : 'Migrate' }}
+        </button>
         <button data-testid="sample-btn" type="button" (click)="loadSample()">Load sample</button>
       </div>
     </form>

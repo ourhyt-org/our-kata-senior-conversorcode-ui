@@ -1,12 +1,13 @@
+import type { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { MigrationApiService } from '../data-access/migration-api.service';
 import type {
-  MigrationPayload,
-  MigrationReportDto,
+  MigrateRequestDto,
   MigrationResponseDto,
+  ReportDto,
   SourceLanguage,
   TargetLanguage,
 } from '../domain/migration.models';
@@ -29,7 +30,7 @@ export class Legacy2ModernPageComponent {
   readonly isLoading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly migratedCode = signal('');
-  readonly report = signal<MigrationReportDto | null>(null);
+  readonly report = signal<ReportDto | null>(null);
 
   readonly form = this.formBuilder.nonNullable.group({
     legacyCode: ['', [Validators.required]],
@@ -70,8 +71,8 @@ export class Legacy2ModernPageComponent {
     this.errorMessage.set(null);
 
     const rawValue = this.form.getRawValue();
-    const payload: MigrationPayload = {
-      legacyCode: rawValue.legacyCode,
+    const payload: MigrateRequestDto = {
+      code: rawValue.legacyCode,
       sourceLanguage: rawValue.sourceLanguage,
       targetLanguage: rawValue.targetLanguage,
       ...(rawValue.targetVersion.trim()
@@ -86,12 +87,22 @@ export class Legacy2ModernPageComponent {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (response: MigrationResponseDto) => {
-          this.migratedCode.set(response.migratedCode ?? '');
+          this.migratedCode.set(response.outputCode ?? '');
           this.report.set(response.report ?? { appliedRules: [], warnings: [] });
         },
-        error: () => {
+        error: (error: HttpErrorResponse) => {
           this.migratedCode.set('');
           this.report.set(null);
+          if (error.status === 401) {
+            this.errorMessage.set('Invalid or missing API key');
+            return;
+          }
+          if (error.status === 0) {
+            this.errorMessage.set(
+              'CORS blocked. Verify API Gateway allows x-api-key and your origin.',
+            );
+            return;
+          }
           this.errorMessage.set('Migration failed. Please try again.');
         },
       });

@@ -1,5 +1,6 @@
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
+import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 
 import { MigrationApiService } from '../data-access/migration-api.service';
@@ -59,7 +60,7 @@ describe('Legacy2ModernPageComponent', () => {
 
   it('fills form, runs migrate, and renders migrated code with report', () => {
     const response: MigrationResponseDto = {
-      migratedCode: 'public class HelloWorld {}',
+      outputCode: 'public class HelloWorld {}',
       report: {
         appliedRules: [{ name: 'Rename PROGRAM-ID', matches: 1, lines: [2] }],
         warnings: [{ code: 'W001', message: 'DISPLAY converted to println', lines: [4] }],
@@ -88,7 +89,7 @@ describe('Legacy2ModernPageComponent', () => {
     fixture.detectChanges();
 
     expect(migrationApiServiceMock.migrate).toHaveBeenCalledWith({
-      legacyCode: 'IDENTIFICATION DIVISION.',
+      code: 'IDENTIFICATION DIVISION.',
       sourceLanguage: 'COBOL',
       targetLanguage: 'JAVA',
     });
@@ -103,7 +104,7 @@ describe('Legacy2ModernPageComponent', () => {
 
   it('sends targetVersion when provided', () => {
     migrationApiServiceMock.migrate.mockReturnValue(
-      of({ migratedCode: '', report: { appliedRules: [], warnings: [] } }),
+      of({ outputCode: '', report: { appliedRules: [], warnings: [] } }),
     );
 
     const host = fixture.nativeElement as HTMLElement;
@@ -125,7 +126,7 @@ describe('Legacy2ModernPageComponent', () => {
     fixture.detectChanges();
 
     expect(migrationApiServiceMock.migrate).toHaveBeenCalledWith({
-      legacyCode: 'IDENTIFICATION DIVISION.',
+      code: 'IDENTIFICATION DIVISION.',
       sourceLanguage: 'COBOL',
       targetLanguage: 'JAVA',
       targetVersion: '21',
@@ -185,5 +186,51 @@ describe('Legacy2ModernPageComponent', () => {
 
     const errorState = host.querySelector('[data-testid="error-state"]') as HTMLElement;
     expect(errorState.textContent).toContain('Migration failed. Please try again.');
+  });
+
+  it('renders api key error for 401 responses', () => {
+    migrationApiServiceMock.migrate.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 401 })),
+    );
+
+    const host = fixture.nativeElement as HTMLElement;
+    const legacyCodeInput = host.querySelector(
+      '[data-testid="legacy-code-input"]',
+    ) as HTMLTextAreaElement;
+    const migrateButton = host.querySelector('[data-testid="migrate-btn"]') as HTMLButtonElement;
+
+    legacyCodeInput.value = 'IDENTIFICATION DIVISION.';
+    legacyCodeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    migrateButton.click();
+    fixture.detectChanges();
+
+    const errorState = host.querySelector('[data-testid="error-state"]') as HTMLElement;
+    expect(errorState.textContent).toContain('Invalid or missing API key');
+  });
+
+  it('renders cors error for status 0 responses', () => {
+    migrationApiServiceMock.migrate.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 0 })),
+    );
+
+    const host = fixture.nativeElement as HTMLElement;
+    const legacyCodeInput = host.querySelector(
+      '[data-testid="legacy-code-input"]',
+    ) as HTMLTextAreaElement;
+    const migrateButton = host.querySelector('[data-testid="migrate-btn"]') as HTMLButtonElement;
+
+    legacyCodeInput.value = 'IDENTIFICATION DIVISION.';
+    legacyCodeInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    migrateButton.click();
+    fixture.detectChanges();
+
+    const errorState = host.querySelector('[data-testid="error-state"]') as HTMLElement;
+    expect(errorState.textContent).toContain(
+      'CORS blocked. Verify API Gateway allows x-api-key and your origin.',
+    );
   });
 });

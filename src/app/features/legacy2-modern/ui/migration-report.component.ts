@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { MigrationReportDto } from '../domain/migration.models';
+import { ReportDto } from '../domain/migration.models';
 
 @Component({
   selector: 'app-migration-report',
@@ -8,7 +8,7 @@ import { MigrationReportDto } from '../domain/migration.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MigrationReportComponent {
-  readonly report = input<MigrationReportDto | null>(null);
+  readonly report = input<ReportDto | null>(null);
 
   formatLines(lines: number[]): string {
     return lines.length > 0 ? lines.join(', ') : '-';
