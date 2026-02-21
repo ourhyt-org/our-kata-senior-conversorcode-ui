@@ -9,7 +9,11 @@
     "test": "jest",
     "test:coverage": "jest --config=jest.config.js --coverage --collectCoverageFrom='src/**/*.{ts,html}'",
     "coverage": "npm run test:coverage",
-    "test:ng": "ng test"
+    "test:ng": "ng test",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix"
   },
   "prettier": {
     "printWidth": 100,

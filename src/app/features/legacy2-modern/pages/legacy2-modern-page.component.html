@@ -15,7 +15,11 @@
       <div class="row-grid">
         <div class="field">
           <label for="sourceLanguage">Source language</label>
-          <select id="sourceLanguage" data-testid="source-language" formControlName="sourceLanguage">
+          <select
+            id="sourceLanguage"
+            data-testid="source-language"
+            formControlName="sourceLanguage"
+          >
             @for (option of sourceLanguageOptions; track option) {
               <option [value]="option">{{ option }}</option>
             }
@@ -24,7 +28,11 @@
 
         <div class="field">
           <label for="targetLanguage">Target language</label>
-          <select id="targetLanguage" data-testid="target-language" formControlName="targetLanguage">
+          <select
+            id="targetLanguage"
+            data-testid="target-language"
+            formControlName="targetLanguage"
+          >
             @for (option of targetLanguageOptions; track option) {
               <option [value]="option">{{ option }}</option>
             }
@@ -58,7 +66,12 @@
     <article class="panel">
       <header>
         <h2>Migrated code</h2>
-        <button data-testid="copy-btn" type="button" (click)="copyMigratedCode()" [disabled]="!migratedCode()">
+        <button
+          data-testid="copy-btn"
+          type="button"
+          (click)="copyMigratedCode()"
+          [disabled]="!migratedCode()"
+        >
           Copy
         </button>
       </header>

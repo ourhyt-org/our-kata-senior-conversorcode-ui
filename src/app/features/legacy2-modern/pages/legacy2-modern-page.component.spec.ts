@@ -110,7 +110,9 @@ describe('Legacy2ModernPageComponent', () => {
     const legacyCodeInput = host.querySelector(
       '[data-testid="legacy-code-input"]',
     ) as HTMLTextAreaElement;
-    const targetVersionInput = host.querySelector('[data-testid="target-version"]') as HTMLInputElement;
+    const targetVersionInput = host.querySelector(
+      '[data-testid="target-version"]',
+    ) as HTMLInputElement;
     const migrateButton = host.querySelector('[data-testid="migrate-btn"]') as HTMLButtonElement;
 
     legacyCodeInput.value = 'IDENTIFICATION DIVISION.';
