@@ -1,0 +1,88 @@
+<main class="page">
+  <section class="input-panel">
+    <h1>Legacy2Modern</h1>
+
+    <form [formGroup]="form" (ngSubmit)="migrate()" class="form-grid">
+      <label for="legacyCode">Legacy code</label>
+      <textarea
+        id="legacyCode"
+        data-testid="legacy-code-input"
+        formControlName="legacyCode"
+        rows="12"
+        placeholder="Paste COBOL or Delphi code"
+      ></textarea>
+
+      <div class="row-grid">
+        <div class="field">
+          <label for="sourceLanguage">Source language</label>
+          <select
+            id="sourceLanguage"
+            data-testid="source-language"
+            formControlName="sourceLanguage"
+          >
+            @for (option of sourceLanguageOptions; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="targetLanguage">Target language</label>
+          <select
+            id="targetLanguage"
+            data-testid="target-language"
+            formControlName="targetLanguage"
+          >
+            @for (option of targetLanguageOptions; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="targetVersion">Target version (optional)</label>
+          <input
+            id="targetVersion"
+            data-testid="target-version"
+            type="text"
+            formControlName="targetVersion"
+            placeholder="e.g. 21"
+          />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button data-testid="migrate-btn" type="submit" [disabled]="isLoading()">Migrate</button>
+        <button data-testid="sample-btn" type="button" (click)="loadSample()">Load sample</button>
+      </div>
+    </form>
+
+    @if (errorMessage()) {
+      <p data-testid="error-state" class="error" role="alert">{{ errorMessage() }}</p>
+    }
+  </section>
+
+  <section class="output-grid">
+    <article class="panel">
+      <header>
+        <h2>Migrated code</h2>
+        <button
+          data-testid="copy-btn"
+          type="button"
+          (click)="copyMigratedCode()"
+          [disabled]="!migratedCode()"
+        >
+          Copy
+        </button>
+      </header>
+      <pre data-testid="migrated-code">{{ migratedCode() }}</pre>
+    </article>
+
+    <article class="panel">
+      <header>
+        <h2>Report</h2>
+      </header>
+      <app-migration-report [report]="report()" data-testid="report" />
+    </article>
+  </section>
+</main>
