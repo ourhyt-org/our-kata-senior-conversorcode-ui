@@ -1,3 +1,4 @@
 export const environment = {
-  API_BASE_URL: 'http://localhost:8080',
+  apiBaseUrl: 'https://dev-api.ourhyt.art',
+  apiKey: '<dev key>',
 };

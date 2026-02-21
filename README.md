@@ -17,19 +17,26 @@ ng serve
 
 App runs at `http://localhost:4200`.
 
-## Backend URL configuration
+## Backend configuration
 
-Set backend base URL in:
+Set API config in:
 
 `src/environments/environment.ts`
 
 ```ts
 export const environment = {
-  API_BASE_URL: 'http://localhost:8080',
+  apiBaseUrl: 'https://dev-api.ourhyt.art',
+  apiKey: '<dev key>',
 };
 ```
 
-The frontend calls `${API_BASE_URL}/migrate`.
+Production values are in:
+
+`src/environments/environment.prod.ts`
+
+The frontend calls `${apiBaseUrl}/migrate` and sends `X-API-KEY`.
+
+For kata/demo only: browser API keys are visible to users and should not be treated as secure secrets.
 
 ## Test
 

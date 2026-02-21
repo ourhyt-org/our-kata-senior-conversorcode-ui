@@ -2,8 +2,8 @@ export type SourceLanguage = 'COBOL' | 'DELPHI';
 
 export type TargetLanguage = 'JAVA' | 'NODE' | 'PYTHON' | 'GO';
 
-export interface MigrationPayload {
-  legacyCode: string;
+export interface MigrateRequestDto {
+  code: string;
   sourceLanguage: SourceLanguage;
   targetLanguage: TargetLanguage;
   targetVersion?: string;
@@ -21,12 +21,12 @@ export interface WarningDto {
   lines: number[];
 }
 
-export interface MigrationReportDto {
+export interface ReportDto {
   appliedRules: AppliedRuleDto[];
   warnings: WarningDto[];
 }
 
 export interface MigrationResponseDto {
-  migratedCode: string;
-  report: MigrationReportDto;
+  outputCode: string;
+  report: ReportDto;
 }
