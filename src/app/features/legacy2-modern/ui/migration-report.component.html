@@ -1,0 +1,37 @@
+@if (report(); as reportData) {
+  <div class="report-section">
+    <h3>Applied rules</h3>
+    @if (reportData.appliedRules.length > 0) {
+      <ul>
+        @for (rule of reportData.appliedRules; track rule.name) {
+          <li>
+            <strong>{{ rule.name }}</strong>
+            <span>matches: {{ rule.matches }}</span>
+            <span>lines: {{ formatLines(rule.lines) }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty">No applied rules.</p>
+    }
+  </div>
+
+  <div class="report-section">
+    <h3>Warnings</h3>
+    @if (reportData.warnings.length > 0) {
+      <ul>
+        @for (warning of reportData.warnings; track warning.code + warning.message) {
+          <li>
+            <strong>{{ warning.code }}</strong>
+            <span>{{ warning.message }}</span>
+            <span>lines: {{ formatLines(warning.lines) }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="empty">No warnings.</p>
+    }
+  </div>
+} @else {
+  <p class="empty">No report yet.</p>
+}
