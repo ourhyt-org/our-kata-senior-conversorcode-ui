@@ -36,7 +36,7 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 sync dist/our-kata-senior-conversorcode-ui/ s3://ourhyt-kata-dev-static-site --delete
+          aws s3 sync dist/our-kata-senior-conversorcode-ui/ s3://ourhyt-kata-static-site --delete
 
       - name: Invalidate CloudFront cache
         run: |
