@@ -10,7 +10,7 @@ import { ReportDto } from '../domain/migration.models';
 export class MigrationReportComponent {
   readonly report = input<ReportDto | null>(null);
 
-  formatLines(lines: number[]): string {
-    return lines.length > 0 ? lines.join(', ') : '-';
+  formatLines(lines: number[] | null | undefined): string {
+    return lines && lines.length > 0 ? lines.join(', ') : '-';
   }
 }

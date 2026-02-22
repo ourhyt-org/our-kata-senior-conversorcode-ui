@@ -62,8 +62,8 @@ describe('Legacy2ModernPageComponent', () => {
     const response: MigrationResponseDto = {
       outputCode: 'public class HelloWorld {}',
       report: {
-        appliedRules: [{ name: 'Rename PROGRAM-ID', matches: 1, lines: [2] }],
-        warnings: [{ code: 'W001', message: 'DISPLAY converted to println', lines: [4] }],
+        appliedRules: [{ name: 'Rename PROGRAM-ID', matches: 1, lineNumbers: [2] }],
+        warnings: [{ code: 'W001', message: 'DISPLAY converted to println', lineNumbers: [4] }],
       },
     };
 

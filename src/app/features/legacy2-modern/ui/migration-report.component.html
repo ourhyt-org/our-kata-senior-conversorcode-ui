@@ -3,11 +3,14 @@
     <h3>Applied rules</h3>
     @if (reportData.appliedRules.length > 0) {
       <ul>
-        @for (rule of reportData.appliedRules; track rule.name) {
+        @for (rule of reportData.appliedRules; track rule.id ?? rule.name + $index) {
           <li>
             <strong>{{ rule.name }}</strong>
+            @if (rule.description) {
+              <span>{{ rule.description }}</span>
+            }
             <span>matches: {{ rule.matches }}</span>
-            <span>lines: {{ formatLines(rule.lines) }}</span>
+            <span>lines: {{ formatLines(rule.lineNumbers) }}</span>
           </li>
         }
       </ul>
@@ -24,7 +27,7 @@
           <li>
             <strong>{{ warning.code }}</strong>
             <span>{{ warning.message }}</span>
-            <span>lines: {{ formatLines(warning.lines) }}</span>
+            <span>lines: {{ formatLines(warning.lineNumbers) }}</span>
           </li>
         }
       </ul>
