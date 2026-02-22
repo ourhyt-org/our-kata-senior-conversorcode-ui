@@ -22,8 +22,8 @@ describe('MigrationReportComponent', () => {
 
   it('renders applied rules and warnings when report exists', () => {
     fixture.componentRef.setInput('report', {
-      appliedRules: [{ name: 'Rule 1', matches: 2, lines: [1, 3] }],
-      warnings: [{ code: 'W100', message: 'Sample warning', lines: [9] }],
+      appliedRules: [{ name: 'Rule 1', matches: 2, lineNumbers: [1, 3] }],
+      warnings: [{ code: 'W100', message: 'Sample warning', lineNumbers: [9] }],
     });
     fixture.detectChanges();
 

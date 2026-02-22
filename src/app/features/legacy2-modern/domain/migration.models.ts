@@ -10,15 +10,17 @@ export interface MigrateRequestDto {
 }
 
 export interface AppliedRuleDto {
+  id?: string;
   name: string;
+  description?: string;
   matches: number;
-  lines: number[];
+  lineNumbers: number[];
 }
 
 export interface WarningDto {
   code: string;
   message: string;
-  lines: number[];
+  lineNumbers: number[];
 }
 
 export interface ReportDto {
