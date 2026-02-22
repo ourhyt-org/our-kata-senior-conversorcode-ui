@@ -1,0 +1,29 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.tone-pending {
+  background: var(--chip-pending-bg);
+  color: var(--chip-pending-text);
+}
+
+.tone-running {
+  background: var(--chip-running-bg);
+  color: var(--chip-running-text);
+}
+
+.tone-finished {
+  background: var(--chip-finished-bg);
+  color: var(--chip-finished-text);
+}
+
+.tone-failed {
+  background: var(--chip-failed-bg);
+  color: var(--chip-failed-text);
+}

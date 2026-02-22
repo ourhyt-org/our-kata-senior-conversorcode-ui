@@ -1,1 +1,14 @@
-<app-legacy2-modern-page />
+<button
+  class="mode-toggle"
+  type="button"
+  [attr.aria-label]="themeService.isAdvanced() ? 'Switch to basic mode' : 'Switch to advanced mode'"
+  (click)="themeService.toggleMode()"
+>
+  {{ themeService.isAdvanced() ? 'Basic Mode' : 'Advanced Mode' }}
+</button>
+
+@if (themeService.isAdvanced()) {
+  <app-converter-page />
+} @else {
+  <app-legacy2-modern-page />
+}

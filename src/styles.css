@@ -1,3 +1,96 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+:root,
+[data-theme='basic'] {
+  --bg-app: #f3f6fb;
+  --bg-elevated: #ffffff;
+  --bg-soft: #edf2f9;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --border-default: #cbd5e1;
+  --border-strong: #94a3b8;
+  --accent-primary: #0f4aa3;
+  --accent-primary-hover: #0b3b83;
+  --accent-contrast: #ffffff;
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #b91c1c;
+  --focus-ring: #2563eb;
+  --chip-pending-bg: #fff7ed;
+  --chip-pending-text: #9a3412;
+  --chip-running-bg: #ecfeff;
+  --chip-running-text: #155e75;
+  --chip-finished-bg: #ecfdf3;
+  --chip-finished-text: #166534;
+  --chip-failed-bg: #fef2f2;
+  --chip-failed-text: #991b1b;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --font-ui: 'Segoe UI', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+  --transition-fast: 160ms ease;
+  --transition-base: 260ms ease;
+  --anim-rise: 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --anim-pulse: 1800ms ease-in-out infinite;
+}
+
+[data-theme='advanced'] {
+  --bg-app: #050816;
+  --bg-elevated: rgba(18, 24, 47, 0.72);
+  --bg-soft: rgba(26, 33, 61, 0.7);
+  --text-primary: #e6eeff;
+  --text-secondary: #b9c8f3;
+  --text-muted: #91a4d4;
+  --border-default: rgba(94, 122, 202, 0.45);
+  --border-strong: rgba(123, 156, 255, 0.8);
+  --accent-primary: #27d3ff;
+  --accent-primary-hover: #11bde8;
+  --accent-contrast: #04101d;
+  --success: #27e39a;
+  --warning: #ffb347;
+  --danger: #ff5d7d;
+  --focus-ring: #58e6ff;
+  --chip-pending-bg: rgba(255, 179, 71, 0.18);
+  --chip-pending-text: #ffd08d;
+  --chip-running-bg: rgba(39, 211, 255, 0.18);
+  --chip-running-text: #91ecff;
+  --chip-finished-bg: rgba(39, 227, 154, 0.18);
+  --chip-finished-text: #97f8cc;
+  --chip-failed-bg: rgba(255, 93, 125, 0.2);
+  --chip-failed-text: #ff9db0;
+  --shadow-sm: 0 2px 8px rgba(3, 8, 26, 0.55);
+  --shadow-md: 0 18px 42px rgba(0, 0, 0, 0.45);
+  --glow-accent: 0 0 0 1px rgba(39, 211, 255, 0.4), 0 0 20px rgba(39, 211, 255, 0.22);
+  --glass-blur: blur(14px);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --font-ui: 'Segoe UI', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+  --transition-fast: 160ms ease;
+  --transition-base: 260ms ease;
+  --anim-rise: 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --anim-pulse: 1800ms ease-in-out infinite;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg-app);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition-duration: 0ms !important;
+  }
+}

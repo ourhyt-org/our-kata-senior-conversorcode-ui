@@ -1,0 +1,43 @@
+.preview {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.45rem;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.tabs button {
+  border: 1px solid var(--border-default);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.5rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.tabs button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+pre {
+  margin: 0;
+  padding: 0.9rem;
+  max-height: 360px;
+  overflow: auto;
+  font-family: var(--font-mono);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}

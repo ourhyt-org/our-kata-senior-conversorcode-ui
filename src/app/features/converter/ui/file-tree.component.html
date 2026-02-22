@@ -1,0 +1,16 @@
+<nav class="tree" aria-label="Generated files">
+  <ul>
+    @for (file of files(); track file.path) {
+      <li>
+        <button
+          type="button"
+          [attr.aria-current]="selectedPath() === file.path ? 'page' : null"
+          [class.selected]="selectedPath() === file.path"
+          (click)="selectFile.emit(file.path)"
+        >
+          {{ file.path }}
+        </button>
+      </li>
+    }
+  </ul>
+</nav>

@@ -1,0 +1,21 @@
+<section class="preview" aria-label="Code preview">
+  <div class="tabs" role="tablist" aria-label="Files">
+    @for (file of files(); track file.path) {
+      <button
+        role="tab"
+        type="button"
+        [attr.aria-selected]="selectedPath() === file.path"
+        [class.active]="selectedPath() === file.path"
+        (click)="selectFile.emit(file.path)"
+      >
+        {{ file.path }}
+      </button>
+    }
+  </div>
+
+  @if (selectedFile(); as activeFile) {
+    <pre><code>{{ activeFile.content }}</code></pre>
+  } @else {
+    <p>No file selected.</p>
+  }
+</section>

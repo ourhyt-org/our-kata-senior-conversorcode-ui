@@ -1,0 +1,175 @@
+<div class="converter-shell">
+  <header class="app-header">
+    <div>
+      <h1>Legacy Code Converter</h1>
+      <p>Convert COBOL or Delphi into modern architectures.</p>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel form-panel">
+      <h2>Conversion Setup</h2>
+      <form [formGroup]="form" (ngSubmit)="convert()">
+        <div class="grid two">
+          <label>
+            Source language
+            <select formControlName="languageSelected" aria-label="Source language">
+              @for (source of sourceOptions; track source) {
+                <option [value]="source">{{ source }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            Target language
+            <select formControlName="languageTarget" aria-label="Target language">
+              @for (target of targetOptions; track target.value) {
+                <option [value]="target.value">{{ target.label }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            Version
+            <select formControlName="version" aria-label="Target version">
+              @for (version of availableVersions(); track version) {
+                <option [value]="version">{{ version }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            Architecture
+            <select formControlName="typeArchitected" aria-label="Architecture type">
+              @for (arch of architectureOptions; track arch.value) {
+                <option [value]="arch.value">{{ arch.label }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <label class="code-field">
+          Code to convert
+          <div class="code-editor">
+            <div class="line-numbers" aria-hidden="true">
+              @for (line of codeLineNumbers(); track line) {
+                <span>{{ line }}</span>
+              }
+            </div>
+            <textarea
+              formControlName="codeToConvert"
+              aria-label="Code to convert"
+              rows="16"
+              spellcheck="false"
+            ></textarea>
+          </div>
+        </label>
+
+        @if (themeService.isAdvanced()) {
+          <fieldset class="advanced-panel">
+            <legend>Advanced simulation</legend>
+            <label class="check-row">
+              <input
+                type="checkbox"
+                [checked]="advancedSettings().deterministic"
+                (change)="updateDeterministic($any($event.target).checked)"
+              />
+              Deterministic mock mode
+            </label>
+            <label>
+              Seed
+              <input
+                type="number"
+                [value]="advancedSettings().seed"
+                (input)="updateSeed($any($event.target).value)"
+                aria-label="Deterministic seed"
+              />
+            </label>
+          </fieldset>
+        }
+
+        @if (riskErrors().length > 0) {
+          <div class="error-box" aria-live="assertive">
+            <strong>Resolve these issues before convert:</strong>
+            <ul>
+              @for (error of riskErrors(); track error) {
+                <li>{{ error }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        <div class="actions">
+          <app-button
+            type="submit"
+            [disabled]="converterState.isWorking()"
+            ariaLabel="Convert code"
+          >
+            Convert
+          </app-button>
+          @if (currentStatus() === 'FAILED') {
+            <app-button variant="secondary" ariaLabel="Retry conversion" (click)="retry()">
+              Retry
+            </app-button>
+          }
+        </div>
+      </form>
+    </section>
+
+    <section class="panel result-panel" aria-live="polite">
+      <div class="status-row">
+        <h2>Result</h2>
+        @if (currentStatus() !== 'IDLE') {
+          <app-status-chip [status]="currentStatus()" />
+        }
+      </div>
+
+      @if (converterState.isWorking()) {
+        <app-loader
+          [label]="
+            'Conversion in progress... elapsed: ' + converterState.result().elapsedSeconds + 's'
+          "
+        />
+      }
+
+      @if (converterState.result().status === 'FINISHED') {
+        <div class="links">
+          @if (converterState.result().downloadUrl; as download) {
+            <a [href]="download" target="_blank" rel="noopener noreferrer">Download zip</a>
+          }
+          @if (converterState.result().reportUrl; as report) {
+            <a [href]="report" target="_blank" rel="noopener noreferrer">Open report</a>
+          }
+        </div>
+
+        @if (converterState.result().inlineFiles.length > 0) {
+          <div class="inline-preview">
+            <app-file-tree
+              [files]="converterState.result().inlineFiles"
+              [selectedPath]="converterState.result().selectedFilePath"
+              (selectFile)="onSelectFile($event)"
+            />
+            <app-code-preview-tabs
+              [files]="converterState.result().inlineFiles"
+              [selectedPath]="converterState.result().selectedFilePath"
+              (selectFile)="onSelectFile($event)"
+            />
+          </div>
+        }
+      }
+
+      @if (converterState.result().status === 'FAILED') {
+        <p class="error" role="alert">
+          {{ converterState.result().errorMessage ?? 'Conversion failed. Please retry.' }}
+        </p>
+      }
+    </section>
+
+    <app-how-it-works-panel />
+
+    <app-history-panel
+      [items]="converterState.history()"
+      (viewDetails)="onViewHistory($event.jobId)"
+    />
+  </main>
+</div>
