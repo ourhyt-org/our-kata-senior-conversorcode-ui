@@ -2,7 +2,7 @@ name: Deploy Angular UI to S3 + CloudFront (QA)
 
 on:
   push:
-    branches: [qa]
+    branches: [qa, feature/*]
 
 permissions:
   id-token: write
