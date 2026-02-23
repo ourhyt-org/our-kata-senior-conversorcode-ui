@@ -35,8 +35,9 @@
                     type="button"
                     [class.active]="selectedPath() === path"
                     (click)="selectFile(path)"
+                    [title]="path"
                   >
-                    {{ path }}
+                    <span>{{ path }}</span>
                   </button>
                 </li>
               }

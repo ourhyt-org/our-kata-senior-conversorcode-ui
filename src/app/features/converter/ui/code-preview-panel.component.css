@@ -2,15 +2,16 @@
   position: fixed;
   inset: 0;
   background: rgba(3, 8, 22, 0.45);
-  z-index: 1200;
+  z-index: 3000;
   display: grid;
   place-items: center;
   padding: 1rem;
+  overflow: auto;
 }
 
 .panel {
-  width: min(1200px, 100%);
-  max-height: 90vh;
+  width: min(1280px, calc(100vw - 2rem));
+  height: min(90vh, 920px);
   overflow: auto;
   background: var(--bg-elevated);
   border: 1px solid var(--border-default);
@@ -52,9 +53,11 @@ header button {
   display: grid;
   grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.8fr);
   gap: 0.8rem;
+  min-height: 0;
 }
 
 aside {
+  min-width: 0;
   border: 1px solid var(--border-default);
   border-radius: var(--radius-sm);
   padding: 0.6rem;
@@ -95,6 +98,16 @@ aside li button {
   padding: 0.42rem 0.5rem;
   font-family: var(--font-mono);
   font-size: 0.79rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+aside li button span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 aside li button.active {
@@ -113,6 +126,7 @@ aside li button.active {
 }
 
 article {
+  min-width: 0;
   border: 1px solid var(--border-default);
   border-radius: var(--radius-sm);
   overflow: hidden;
