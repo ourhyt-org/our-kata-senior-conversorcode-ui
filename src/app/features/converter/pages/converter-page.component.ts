@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { startWith } from 'rxjs';
 import {
   ArchitectureType,
   LanguageSelected,
@@ -64,8 +66,15 @@ export class ConverterPageComponent {
     codeToConvert: ['', [Validators.required]],
   });
 
+  private readonly selectedTarget = toSignal(
+    this.form.controls.languageTarget.valueChanges.pipe(
+      startWith(this.form.controls.languageTarget.value),
+    ),
+    { initialValue: this.form.controls.languageTarget.value },
+  );
+
   readonly availableVersions = computed(() => {
-    const target = this.form.controls.languageTarget.value;
+    const target = this.selectedTarget();
     return getVersionsForTarget(target).versions;
   });
 

@@ -91,6 +91,19 @@ describe('ConverterPageComponent', () => {
     expect(converterStateMock.startConversion).toHaveBeenCalled();
   });
 
+  it('updates available versions when target language changes', () => {
+    const component = fixture.componentInstance;
+    component.form.controls.languageTarget.setValue('NODE');
+    fixture.detectChanges();
+
+    expect(component.availableVersions()).toEqual(['14', '18', '22']);
+
+    component.form.controls.languageTarget.setValue('PYTHON');
+    fixture.detectChanges();
+
+    expect(component.availableVersions()).toEqual(['3.10', '3.11', '3.12']);
+  });
+
   it('shows finished links when conversion succeeds', () => {
     resultSignal.set({
       status: 'FINISHED',
