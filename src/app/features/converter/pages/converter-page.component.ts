@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -136,7 +137,9 @@ export class ConverterPageComponent {
         this.quota.set(null);
         return;
       }
-      void this.loadAdvancedQuota(accessToken);
+      untracked(() => {
+        void this.loadAdvancedQuota(accessToken);
+      });
     });
   }
 
