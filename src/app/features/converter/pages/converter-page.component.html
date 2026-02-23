@@ -9,6 +9,27 @@
   <main class="layout">
     <section class="panel form-panel">
       <h2>Conversion Setup</h2>
+      @if (isAdvancedMode()) {
+        @if (!isAdvancedAuthenticated()) {
+          <app-advanced-auth-panel
+            [loading]="authLoading()"
+            [error]="authError()"
+            (submitted)="signInToAdvanced($event)"
+          />
+        } @else {
+          <section class="advanced-toolbar" aria-label="Advanced authentication and quota">
+            <div class="advanced-toolbar-main">
+              <app-quota-badge [quota]="quota()" />
+              @if (quotaLoading()) {
+                <span class="subtle">Loading quota...</span>
+              }
+            </div>
+            <button type="button" class="signout-btn" (click)="signOutFromAdvanced()">
+              Sign out
+            </button>
+          </section>
+        }
+      }
       <form [formGroup]="form" (ngSubmit)="convert()">
         <div class="grid two">
           <label>
@@ -75,13 +96,12 @@
             </ul>
           </div>
         }
+        @if (networkError()) {
+          <p class="error-banner" role="alert">{{ networkError() }}</p>
+        }
 
         <div class="actions">
-          <app-button
-            type="submit"
-            [disabled]="converterState.isWorking()"
-            ariaLabel="Convert code"
-          >
+          <app-button type="submit" [disabled]="isSubmitDisabled()" ariaLabel="Convert code">
             Convert
           </app-button>
           @if (currentStatus() === 'FAILED') {

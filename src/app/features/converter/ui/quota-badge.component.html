@@ -1,0 +1,6 @@
+@if (quota(); as quotaData) {
+  <div class="badge" [class]="'badge tone-' + tone()" aria-label="Advanced quota">
+    <strong>{{ quotaData.remaining }} / {{ quotaData.limit }}</strong>
+    <span>resets {{ quotaData.resetAt }}</span>
+  </div>
+}

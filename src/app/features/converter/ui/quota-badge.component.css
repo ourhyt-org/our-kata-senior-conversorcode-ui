@@ -1,0 +1,24 @@
+.badge {
+  display: inline-grid;
+  gap: 0.15rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.55rem;
+  font-size: 0.78rem;
+}
+
+.badge strong {
+  font-size: 0.85rem;
+}
+
+.tone-normal {
+  background: color-mix(in srgb, var(--success) 14%, transparent);
+}
+
+.tone-warning {
+  background: color-mix(in srgb, var(--warning) 15%, transparent);
+}
+
+.tone-danger {
+  background: color-mix(in srgb, var(--danger) 18%, transparent);
+}

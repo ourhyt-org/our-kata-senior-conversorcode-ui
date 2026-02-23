@@ -4,6 +4,7 @@ import { computed, signal } from '@angular/core';
 import { CONVERSION_API } from '../../../core/conversion-api/conversion-api.token';
 import { ConverterPageComponent } from './converter-page.component';
 import { ConverterState } from '../state/converter.state';
+import { AuthService } from '../../../core/auth/auth.service';
 import { ThemeService } from '../../../core/theme/theme.service';
 
 describe('ConverterPageComponent', () => {
@@ -39,6 +40,14 @@ describe('ConverterPageComponent', () => {
       return status === 'PENDING' || status === 'RUNNING';
     }),
     startConversion: jest.fn(async () => undefined),
+    startAdvancedConversion: jest.fn(async () => ({
+      jobId: 'job-adv',
+      status: 'PENDING',
+      pollUrl: '/conversions/job-adv',
+      remaining: 4,
+      limit: 5,
+      resetAt: '2026-02-24T00:00:00.000Z',
+    })),
     retryLast: jest.fn(async () => undefined),
     selectFile: jest.fn(),
     viewHistory: jest.fn(),
@@ -47,8 +56,27 @@ describe('ConverterPageComponent', () => {
 
   const conversionApiMock = {
     createConversion: jest.fn(),
+    createAdvancedConversion: jest.fn(),
     getConversionStatus: jest.fn(),
     getConversionFiles: jest.fn(),
+    getAdvancedQuota: jest.fn(async () => ({
+      remaining: 3,
+      limit: 5,
+      resetAt: '2026-02-24T00:00:00.000Z',
+    })),
+  };
+
+  const authToken = signal<string | null>(null);
+
+  const authServiceMock = {
+    accessToken: authToken.asReadonly(),
+    user: signal(null).asReadonly(),
+    session: signal(null).asReadonly(),
+    isAuthenticated: jest.fn(() => Boolean(authToken())),
+    login: jest.fn(async () => undefined),
+    logout: jest.fn(async () => {
+      authToken.set(null);
+    }),
   };
 
   beforeEach(async () => {
@@ -58,6 +86,7 @@ describe('ConverterPageComponent', () => {
         { provide: ThemeService, useValue: themeServiceMock },
         { provide: ConverterState, useValue: converterStateMock },
         { provide: CONVERSION_API, useValue: conversionApiMock },
+        { provide: AuthService, useValue: authServiceMock },
       ],
     }).compileComponents();
 
@@ -67,6 +96,13 @@ describe('ConverterPageComponent', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    authToken.set(null);
+    themeMode.set('basic');
+    conversionApiMock.getAdvancedQuota.mockResolvedValue({
+      remaining: 3,
+      limit: 5,
+      resetAt: '2026-02-24T00:00:00.000Z',
+    });
   });
 
   it('blocks submit when risk validation fails', async () => {
@@ -151,5 +187,27 @@ describe('ConverterPageComponent', () => {
     await component.retry();
 
     expect(converterStateMock.retryLast).toHaveBeenCalled();
+  });
+
+  it('disables advanced submit when quota is exhausted', async () => {
+    themeMode.set('advanced');
+    authToken.set('token-123');
+    conversionApiMock.getAdvancedQuota.mockResolvedValue({
+      remaining: 0,
+      limit: 5,
+      resetAt: '2026-02-24T00:00:00.000Z',
+    });
+
+    fixture.detectChanges();
+    await Promise.resolve();
+    await Promise.resolve();
+    fixture.detectChanges();
+
+    const submitButton = fixture.nativeElement.querySelector(
+      'app-button button[type="submit"]',
+    ) as HTMLButtonElement;
+
+    expect(submitButton.disabled).toBe(true);
+    expect(fixture.nativeElement.textContent).toContain('Daily limit reached');
   });
 });

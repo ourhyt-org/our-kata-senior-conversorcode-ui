@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { CONVERSION_API } from '../../../core/conversion-api/conversion-api.token';
 import {
+  AdvancedCreateConversionResponse,
+  AdvancedQuotaDto,
   ConversionApi,
   CreateConversionRequest,
   CreateJobResponse,
@@ -14,8 +16,26 @@ class FailingApi implements ConversionApi {
     return { jobId: 'job-1', status: 'PENDING', pollUrl: '/conversions/job-1' };
   }
 
+  async createAdvancedConversion(
+    _: CreateConversionRequest,
+    __: string,
+  ): Promise<AdvancedCreateConversionResponse> {
+    return {
+      jobId: 'job-1',
+      status: 'PENDING',
+      pollUrl: '/conversions/job-1',
+      remaining: 5,
+      limit: 5,
+      resetAt: '2026-02-24T00:00:00.000Z',
+    };
+  }
+
   async getConversionStatus(_: string): Promise<JobStatusResponse> {
     throw new Error('network');
+  }
+
+  async getAdvancedQuota(_: string): Promise<AdvancedQuotaDto> {
+    return { remaining: 5, limit: 5, resetAt: '2026-02-24T00:00:00.000Z' };
   }
 
   async getConversionFiles(): Promise<never> {
