@@ -41,11 +41,6 @@ export interface RiskValidationResult {
   errors: string[];
 }
 
-export interface AdvancedSettings {
-  deterministic: boolean;
-  seed: number;
-}
-
 export const HISTORY_STORAGE_KEY = 'legacy-converter-history:v1';
 
 export const MAX_HISTORY_ITEMS = 50;

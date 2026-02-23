@@ -19,7 +19,7 @@ type BackendCreateConversionRequest = {
   version: string;
   typeArchitected: string;
   code: string;
-  options: Record<string, unknown>;
+  options: {};
 };
 
 type BackendCreateConversionResponse = {
@@ -57,10 +57,7 @@ export class HttpConversionApiService implements ConversionApi {
       version: req.version,
       typeArchitected: this.mapArchitecture(req.typeArchitected),
       code: req.codeToConvert,
-      options: {
-        deterministic: req.deterministic ?? false,
-        seed: req.seed ?? null,
-      },
+      options: {},
     };
 
     return firstValueFrom(

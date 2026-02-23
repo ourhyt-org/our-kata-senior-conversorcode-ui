@@ -28,8 +28,6 @@ describe('HttpConversionApiService', () => {
       version: '21',
       typeArchitected: 'HEXAGONAL',
       codeToConvert: 'IF AMOUNT > 0',
-      deterministic: true,
-      seed: 77,
     });
 
     const request = httpTestingController.expectOne(`${environment.apiBaseUrl}/conversions`);
@@ -41,10 +39,7 @@ describe('HttpConversionApiService', () => {
       version: '21',
       typeArchitected: 'hexagonal',
       code: 'IF AMOUNT > 0',
-      options: {
-        deterministic: true,
-        seed: 77,
-      },
+      options: {},
     });
 
     request.flush({

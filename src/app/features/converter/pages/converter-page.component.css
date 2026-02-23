@@ -133,21 +133,6 @@ a:focus-visible {
   border-radius: 0;
 }
 
-.advanced-panel {
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-sm);
-  padding: 0.65rem;
-  margin-top: 0.8rem;
-  display: grid;
-  gap: 0.5rem;
-}
-
-.check-row {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
 .error-box {
   margin-top: 0.8rem;
   border: 1px solid var(--danger);

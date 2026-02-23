@@ -9,7 +9,7 @@ import { ThemeService } from '../../../core/theme/theme.service';
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
 import { LoaderComponent } from '../../../shared/ui/loader/loader.component';
 import { validateCodeRisk } from '../domain/code-risk.validator';
-import { AdvancedSettings, ConverterFormValue } from '../domain/converter.models';
+import { ConverterFormValue } from '../domain/converter.models';
 import { getVersionsForTarget, TARGET_VERSION_POLICIES } from '../domain/version-policies';
 import { ConverterState } from '../state/converter.state';
 import { CodePreviewTabsComponent } from '../ui/code-preview-tabs.component';
@@ -55,7 +55,6 @@ export class ConverterPageComponent {
   ];
 
   readonly riskErrors = signal<string[]>([]);
-  readonly advancedSettings = signal<AdvancedSettings>({ deterministic: false, seed: 12345 });
 
   readonly form = this.fb.nonNullable.group({
     languageSelected: ['COBOL' as LanguageSelected, [Validators.required]],
@@ -92,18 +91,6 @@ export class ConverterPageComponent {
     });
   }
 
-  updateDeterministic(value: boolean): void {
-    this.advancedSettings.update((current) => ({ ...current, deterministic: value }));
-  }
-
-  updateSeed(value: string): void {
-    const parsed = Number.parseInt(value, 10);
-    this.advancedSettings.update((current) => ({
-      ...current,
-      seed: Number.isNaN(parsed) ? current.seed : parsed,
-    }));
-  }
-
   async convert(): Promise<void> {
     this.form.markAllAsTouched();
     if (this.form.invalid) {
@@ -117,11 +104,7 @@ export class ConverterPageComponent {
       return;
     }
 
-    await this.converterState.startConversion({
-      ...raw,
-      deterministic: this.advancedSettings().deterministic,
-      seed: this.advancedSettings().seed,
-    });
+    await this.converterState.startConversion(raw);
   }
 
   async retry(): Promise<void> {
