@@ -1,0 +1,19 @@
+<section class="auth-panel" aria-label="Sign in to advanced mode">
+  <h3>Sign in to Advanced Mode</h3>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label>
+      Email
+      <input type="email" formControlName="email" aria-label="Email" />
+    </label>
+    <label>
+      Password
+      <input type="password" formControlName="password" aria-label="Password" />
+    </label>
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    }
+    <button type="submit" [disabled]="loading()">
+      {{ loading() ? 'Signing in...' : 'Sign in' }}
+    </button>
+  </form>
+</section>

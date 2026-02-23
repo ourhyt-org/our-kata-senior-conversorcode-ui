@@ -3,6 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
+  AdvancedCreateConversionResponse,
+  AdvancedQuotaDto,
   ArchitectureType,
   ConversionApi,
   ConversionFilesParams,
@@ -29,6 +31,12 @@ type BackendCreateConversionResponse = {
   jobId: string;
   status?: string;
   pollUrl?: string;
+};
+
+type BackendAdvancedCreateResponse = BackendCreateConversionResponse & {
+  remaining: number;
+  limit: number;
+  resetAt: string;
 };
 
 type BackendJobStatusResponse = {
@@ -59,24 +67,13 @@ type BackendConversionFilesResponse = {
 export class HttpConversionApiService implements ConversionApi {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiBaseUrl.replace(/\/$/, '');
-  private readonly headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'X-API-KEY': environment.apiKey,
-  });
 
   createConversion(req: CreateConversionRequest): Promise<CreateJobResponse> {
-    const payload: BackendCreateConversionRequest = {
-      languageSelected: this.mapLanguageSelected(req.languageSelected),
-      languageTarget: this.mapLanguageTarget(req.languageTarget),
-      version: req.version,
-      typeArchitected: this.mapArchitecture(req.typeArchitected),
-      code: req.codeToConvert,
-      options: {},
-    };
+    const payload = this.toCreatePayload(req);
 
     return firstValueFrom(
       this.http.post<BackendCreateConversionResponse>(`${this.baseUrl}/conversions`, payload, {
-        headers: this.headers,
+        headers: this.buildApiKeyHeaders(true),
       }),
     ).then((response) => ({
       jobId: response.jobId,
@@ -85,12 +82,34 @@ export class HttpConversionApiService implements ConversionApi {
     }));
   }
 
+  createAdvancedConversion(
+    req: CreateConversionRequest,
+    accessToken: string,
+  ): Promise<AdvancedCreateConversionResponse> {
+    const payload = this.toCreatePayload(req);
+
+    return firstValueFrom(
+      this.http.post<BackendAdvancedCreateResponse>(
+        `${this.baseUrl}/advanced/conversions`,
+        payload,
+        {
+          headers: this.buildAuthHeaders(accessToken),
+        },
+      ),
+    ).then((response) => ({
+      jobId: response.jobId,
+      status: this.mapStatus(response.status ?? 'PENDING') as 'PENDING' | 'RUNNING',
+      pollUrl: response.pollUrl ?? `${this.baseUrl}/conversions/${response.jobId}`,
+      remaining: response.remaining,
+      limit: response.limit,
+      resetAt: response.resetAt,
+    }));
+  }
+
   getConversionStatus(jobId: string): Promise<JobStatusResponse> {
     return firstValueFrom(
       this.http.get<BackendJobStatusResponse>(`${this.baseUrl}/conversions/${jobId}`, {
-        headers: new HttpHeaders({
-          'X-API-KEY': environment.apiKey,
-        }),
+        headers: this.buildApiKeyHeaders(false),
       }),
     ).then((response) => ({
       jobId: response.jobId,
@@ -101,6 +120,14 @@ export class HttpConversionApiService implements ConversionApi {
       updatedAt:
         response.finishedAt ?? response.startedAt ?? response.createdAt ?? new Date().toISOString(),
     }));
+  }
+
+  getAdvancedQuota(accessToken: string): Promise<AdvancedQuotaDto> {
+    return firstValueFrom(
+      this.http.get<AdvancedQuotaDto>(`${this.baseUrl}/advanced/quota`, {
+        headers: this.buildAuthHeaders(accessToken),
+      }),
+    );
   }
 
   getConversionFiles(
@@ -117,9 +144,7 @@ export class HttpConversionApiService implements ConversionApi {
 
     return firstValueFrom(
       this.http.get<BackendConversionFilesResponse>(`${this.baseUrl}/conversions/${jobId}/files`, {
-        headers: new HttpHeaders({
-          'X-API-KEY': environment.apiKey,
-        }),
+        headers: this.buildApiKeyHeaders(false),
         params: queryParams,
       }),
     ).then((response) => ({
@@ -130,6 +155,33 @@ export class HttpConversionApiService implements ConversionApi {
       skipped: this.mapSkipped(response.skipped ?? []),
       files: response.files ?? [],
     }));
+  }
+
+  private toCreatePayload(req: CreateConversionRequest): BackendCreateConversionRequest {
+    return {
+      languageSelected: this.mapLanguageSelected(req.languageSelected),
+      languageTarget: this.mapLanguageTarget(req.languageTarget),
+      version: req.version,
+      typeArchitected: this.mapArchitecture(req.typeArchitected),
+      code: req.codeToConvert,
+      options: {},
+    };
+  }
+
+  private buildApiKeyHeaders(includeContentType: boolean): HttpHeaders {
+    const headers: Record<string, string> = {
+      'X-API-KEY': environment.apiKey,
+    };
+    if (includeContentType) {
+      headers['Content-Type'] = 'application/json';
+    }
+    return new HttpHeaders(headers);
+  }
+
+  private buildAuthHeaders(accessToken: string): HttpHeaders {
+    return new HttpHeaders({
+      Authorization: `Bearer ${accessToken}`,
+    });
   }
 
   private mapSkipped(items: BackendSkippedItem[]): SkippedFile[] {

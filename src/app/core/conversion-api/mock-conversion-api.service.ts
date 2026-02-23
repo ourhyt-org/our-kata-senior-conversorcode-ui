@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
+  AdvancedCreateConversionResponse,
+  AdvancedQuotaDto,
   ConversionApi,
   ConversionFilesParams,
   ConversionFilesResponse,
@@ -23,26 +25,19 @@ export class MockConversionApiService implements ConversionApi {
   private jobs = new Map<string, MockJob>();
 
   async createConversion(req: CreateConversionRequest): Promise<CreateJobResponse> {
-    const rng = this.buildRng(req);
-    const jobId = this.createJobId();
-    const pendingMs = rng.intBetween(1000, 3000);
-    const runningMs = rng.intBetween(3000, 10000);
-    const shouldFail = rng.next() < 0.1;
+    return this.createJob(req);
+  }
 
-    this.jobs.set(jobId, {
-      request: req,
-      createdAt: Date.now(),
-      pendingMs,
-      runningMs,
-      shouldFail,
-    });
-
-    await this.sleep(250);
-
+  async createAdvancedConversion(
+    req: CreateConversionRequest,
+    _: string,
+  ): Promise<AdvancedCreateConversionResponse> {
+    const response = await this.createJob(req);
     return {
-      jobId,
-      status: 'PENDING',
-      pollUrl: `/conversions/${jobId}`,
+      ...response,
+      remaining: 7,
+      limit: 10,
+      resetAt: new Date(Date.now() + 86_400_000).toISOString(),
     };
   }
 
@@ -88,6 +83,15 @@ export class MockConversionApiService implements ConversionApi {
     };
   }
 
+  async getAdvancedQuota(_: string): Promise<AdvancedQuotaDto> {
+    await this.sleep(120);
+    return {
+      remaining: 7,
+      limit: 10,
+      resetAt: new Date(Date.now() + 86_400_000).toISOString(),
+    };
+  }
+
   async getConversionFiles(
     jobId: string,
     params?: ConversionFilesParams,
@@ -128,6 +132,30 @@ export class MockConversionApiService implements ConversionApi {
       defaultFile,
       manifest,
       skipped: [],
+    };
+  }
+
+  private async createJob(req: CreateConversionRequest): Promise<CreateJobResponse> {
+    const rng = this.buildRng(req);
+    const jobId = this.createJobId();
+    const pendingMs = rng.intBetween(1000, 3000);
+    const runningMs = rng.intBetween(3000, 10000);
+    const shouldFail = rng.next() < 0.1;
+
+    this.jobs.set(jobId, {
+      request: req,
+      createdAt: Date.now(),
+      pendingMs,
+      runningMs,
+      shouldFail,
+    });
+
+    await this.sleep(250);
+
+    return {
+      jobId,
+      status: 'PENDING',
+      pollUrl: `/conversions/${jobId}`,
     };
   }
 

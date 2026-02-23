@@ -42,6 +42,14 @@ export interface CreateJobResponse {
   pollUrl: string;
 }
 
+export interface AdvancedQuotaDto {
+  remaining: number;
+  limit: number;
+  resetAt: string;
+}
+
+export interface AdvancedCreateConversionResponse extends CreateJobResponse, AdvancedQuotaDto {}
+
 export interface JobStatusResponse {
   jobId: string;
   status: ConversionStatus;
@@ -59,7 +67,12 @@ export interface ConversionFilesParams {
 
 export interface ConversionApi {
   createConversion(req: CreateConversionRequest): Promise<CreateJobResponse>;
+  createAdvancedConversion(
+    req: CreateConversionRequest,
+    accessToken: string,
+  ): Promise<AdvancedCreateConversionResponse>;
   getConversionStatus(jobId: string): Promise<JobStatusResponse>;
+  getAdvancedQuota(accessToken: string): Promise<AdvancedQuotaDto>;
   getConversionFiles(
     jobId: string,
     params?: ConversionFilesParams,

@@ -1,8 +1,10 @@
 import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { CONVERSION_API } from '../../../core/conversion-api/conversion-api.token';
 import {
+  AdvancedCreateConversionResponse,
   ConversionStatus,
   CreateConversionRequest,
+  CreateJobResponse,
   JobStatusResponse,
 } from '../../../core/conversion-api/conversion-api.models';
 import { ConversionHistoryRepository } from '../data-access/conversion-history.repository';
@@ -59,21 +61,21 @@ export class ConverterState implements OnDestroy {
     this.resultSignal.set({ ...INITIAL_RESULT, status: 'PENDING', elapsedSeconds: 0 });
 
     const createResponse = await this.api.createConversion(request);
-    this.resultSignal.update((current) => ({
-      ...current,
-      status: createResponse.status,
-      jobId: createResponse.jobId,
-      pollUrl: createResponse.pollUrl,
-    }));
-    this.upsertHistory({
-      jobId: createResponse.jobId,
-      createdAt: new Date().toISOString(),
-      source: request.languageSelected,
-      target: request.languageTarget,
-      status: createResponse.status,
-    });
-    this.startElapsedTimer();
-    this.scheduleNextPoll(0);
+    this.consumeCreateResponse(request, createResponse);
+  }
+
+  async startAdvancedConversion(
+    request: CreateConversionRequest,
+    accessToken: string,
+  ): Promise<AdvancedCreateConversionResponse> {
+    this.stopInternalSchedulers();
+    this.pollErrorCount = 0;
+    this.activeRequestSignal.set(request);
+    this.resultSignal.set({ ...INITIAL_RESULT, status: 'PENDING', elapsedSeconds: 0 });
+
+    const createResponse = await this.api.createAdvancedConversion(request, accessToken);
+    this.consumeCreateResponse(request, createResponse);
+    return createResponse;
   }
 
   async retryLast(): Promise<void> {
@@ -107,6 +109,27 @@ export class ConverterState implements OnDestroy {
 
   ngOnDestroy(): void {
     this.stopInternalSchedulers();
+  }
+
+  private consumeCreateResponse(
+    request: CreateConversionRequest,
+    createResponse: CreateJobResponse,
+  ): void {
+    this.resultSignal.update((current) => ({
+      ...current,
+      status: createResponse.status,
+      jobId: createResponse.jobId,
+      pollUrl: createResponse.pollUrl,
+    }));
+    this.upsertHistory({
+      jobId: createResponse.jobId,
+      createdAt: new Date().toISOString(),
+      source: request.languageSelected,
+      target: request.languageTarget,
+      status: createResponse.status,
+    });
+    this.startElapsedTimer();
+    this.scheduleNextPoll(0);
   }
 
   private scheduleNextPoll(delayMs: number): void {

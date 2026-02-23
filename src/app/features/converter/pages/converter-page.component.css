@@ -66,6 +66,38 @@ h2 {
   margin: 0 0 0.8rem;
 }
 
+.advanced-toolbar {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem;
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  background: var(--bg-soft);
+}
+
+.advanced-toolbar-main {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.subtle {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.signout-btn {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.55rem;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
 .grid {
   display: grid;
   gap: 0.75rem;
@@ -146,6 +178,11 @@ a:focus-visible {
   padding-left: 1rem;
 }
 
+.error-banner {
+  margin: 0.8rem 0 0;
+  color: var(--danger);
+}
+
 .actions {
   display: flex;
   gap: 0.5rem;
@@ -183,6 +220,11 @@ a:focus-visible {
 }
 
 .preview-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.signout-btn:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
