@@ -1,0 +1,11 @@
+<section class="panel" aria-label="How it works">
+  <h3>How it works</h3>
+  <ol>
+    <li>Frontend calls Lambda A.</li>
+    <li>Lambda A stores input in S3.</li>
+    <li>Lambda A publishes message to SQS.</li>
+    <li>Lambda B consumes message and processes conversion.</li>
+    <li>Lambda B stores output zip in S3 and status in DynamoDB.</li>
+    <li>Frontend polls conversion status and retrieves download links.</li>
+  </ol>
+</section>

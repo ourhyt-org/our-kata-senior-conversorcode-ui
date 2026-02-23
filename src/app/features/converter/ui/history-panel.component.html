@@ -1,0 +1,19 @@
+<section class="panel" aria-label="Conversion history">
+  <h3>History</h3>
+  @if (items().length === 0) {
+    <p class="muted">No jobs yet.</p>
+  } @else {
+    <ul>
+      @for (item of items(); track item.jobId) {
+        <li>
+          <div class="job-main">
+            <strong>{{ item.source }} → {{ item.target }}</strong>
+            <small>{{ item.createdAt }}</small>
+          </div>
+          <app-status-chip [status]="item.status" />
+          <button type="button" (click)="viewDetails.emit(item)">View details</button>
+        </li>
+      }
+    </ul>
+  }
+</section>
