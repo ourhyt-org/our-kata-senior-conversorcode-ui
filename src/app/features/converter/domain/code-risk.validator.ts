@@ -33,9 +33,10 @@ export function validateCodeRisk(
   }
 
   if (languageSelected === 'COBOL') {
-    const ifCount = (code.match(/\bIF\b/gi) ?? []).length;
+    const rawIfCount = (code.match(/\bIF\b/gi) ?? []).length;
     const endIfCount = (code.match(/\bEND-IF\b/gi) ?? []).length;
-    if (ifCount > endIfCount) {
+    const openIfCount = Math.max(0, rawIfCount - endIfCount);
+    if (openIfCount > endIfCount) {
       errors.push('COBOL IF/END-IF appears unbalanced.');
     }
   }
