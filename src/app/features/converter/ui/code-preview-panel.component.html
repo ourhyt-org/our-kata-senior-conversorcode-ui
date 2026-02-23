@@ -1,0 +1,79 @@
+@if (open()) {
+  <section class="overlay" role="dialog" aria-modal="true" aria-label="Code preview panel">
+    <div class="panel">
+      <header>
+        <h3>Code preview</h3>
+        <button type="button" (click)="close()" aria-label="Close code preview">Close</button>
+      </header>
+
+      @if (loadingManifest()) {
+        <p>Loading files...</p>
+      } @else {
+        @if (notReadyMessage()) {
+          <p class="notice">{{ notReadyMessage() }}</p>
+        }
+        @if (errorMessage()) {
+          <p class="error" role="alert">{{ errorMessage() }}</p>
+        }
+
+        <div class="split">
+          <aside>
+            <label>
+              Search files
+              <input
+                type="text"
+                [value]="filterText()"
+                (input)="updateFilter($any($event.target).value)"
+                aria-label="Search files"
+              />
+            </label>
+
+            <ul>
+              @for (path of filteredManifest(); track path) {
+                <li>
+                  <button
+                    type="button"
+                    [class.active]="selectedPath() === path"
+                    (click)="selectFile(path)"
+                  >
+                    {{ path }}
+                  </button>
+                </li>
+              }
+            </ul>
+
+            @if (skipped().length > 0) {
+              <div class="skipped">
+                <button type="button" (click)="toggleSkipped()">
+                  {{ skippedExpanded() ? 'Hide skipped files' : 'Show skipped files' }}
+                </button>
+                @if (skippedExpanded()) {
+                  <ul>
+                    @for (item of skipped(); track item.path + item.reason) {
+                      <li>{{ item.path }} - {{ item.reason }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </aside>
+
+          <article>
+            @if (loadingContent()) {
+              <p>Loading file content...</p>
+            } @else {
+              <div class="code-wrap">
+                <div class="lines" aria-hidden="true">
+                  @for (line of selectedLineNumbers(); track line) {
+                    <span>{{ line }}</span>
+                  }
+                </div>
+                <pre><code>{{ selectedContent() }}</code></pre>
+              </div>
+            }
+          </article>
+        </div>
+      }
+    </div>
+  </section>
+}

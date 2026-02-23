@@ -117,22 +117,10 @@
           @if (converterState.result().reportUrl; as report) {
             <a [href]="report" target="_blank" rel="noopener noreferrer">Open report</a>
           }
+          @if (converterState.result().jobId) {
+            <button type="button" class="preview-btn" (click)="openPreview()">Preview code</button>
+          }
         </div>
-
-        @if (converterState.result().inlineFiles.length > 0) {
-          <div class="inline-preview">
-            <app-file-tree
-              [files]="converterState.result().inlineFiles"
-              [selectedPath]="converterState.result().selectedFilePath"
-              (selectFile)="onSelectFile($event)"
-            />
-            <app-code-preview-tabs
-              [files]="converterState.result().inlineFiles"
-              [selectedPath]="converterState.result().selectedFilePath"
-              (selectFile)="onSelectFile($event)"
-            />
-          </div>
-        }
       }
 
       @if (converterState.result().status === 'FAILED') {
@@ -150,3 +138,9 @@
     />
   </main>
 </div>
+
+<app-code-preview-panel
+  [open]="previewOpen()"
+  [jobId]="converterState.result().jobId"
+  (closed)="closePreview()"
+/>

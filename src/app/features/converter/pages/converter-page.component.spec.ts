@@ -1,6 +1,7 @@
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { computed, signal } from '@angular/core';
+import { CONVERSION_API } from '../../../core/conversion-api/conversion-api.token';
 import { ConverterPageComponent } from './converter-page.component';
 import { ConverterState } from '../state/converter.state';
 import { ThemeService } from '../../../core/theme/theme.service';
@@ -41,6 +42,13 @@ describe('ConverterPageComponent', () => {
     retryLast: jest.fn(async () => undefined),
     selectFile: jest.fn(),
     viewHistory: jest.fn(),
+    refreshJobStatus: jest.fn(),
+  };
+
+  const conversionApiMock = {
+    createConversion: jest.fn(),
+    getConversionStatus: jest.fn(),
+    getConversionFiles: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -49,6 +57,7 @@ describe('ConverterPageComponent', () => {
       providers: [
         { provide: ThemeService, useValue: themeServiceMock },
         { provide: ConverterState, useValue: converterStateMock },
+        { provide: CONVERSION_API, useValue: conversionApiMock },
       ],
     }).compileComponents();
 

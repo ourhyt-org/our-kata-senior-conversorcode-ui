@@ -1,16 +1,19 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   ArchitectureType,
   ConversionApi,
+  ConversionFilesParams,
+  ConversionFilesResponse,
   ConversionStatus,
   CreateConversionRequest,
   CreateJobResponse,
   JobStatusResponse,
   LanguageSelected,
   LanguageTarget,
+  SkippedFile,
 } from './conversion-api.models';
 
 type BackendCreateConversionRequest = {
@@ -39,6 +42,17 @@ type BackendJobStatusResponse = {
   downloadUrl?: string;
   reportUrl?: string;
   errorMessage?: string | null;
+};
+
+type BackendManifestItem = string | { path: string };
+
+type BackendSkippedItem = string | { path?: string; reason?: string };
+
+type BackendConversionFilesResponse = {
+  defaultFile?: string | null;
+  manifest?: BackendManifestItem[];
+  skipped?: BackendSkippedItem[];
+  files?: Array<{ path: string; content: string }>;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -87,6 +101,52 @@ export class HttpConversionApiService implements ConversionApi {
       updatedAt:
         response.finishedAt ?? response.startedAt ?? response.createdAt ?? new Date().toISOString(),
     }));
+  }
+
+  getConversionFiles(
+    jobId: string,
+    params?: ConversionFilesParams,
+  ): Promise<ConversionFilesResponse> {
+    let queryParams = new HttpParams();
+    if (params?.includeContent !== undefined) {
+      queryParams = queryParams.set('includeContent', String(params.includeContent));
+    }
+    if (params?.paths && params.paths.length > 0) {
+      queryParams = queryParams.set('paths', params.paths.join(','));
+    }
+
+    return firstValueFrom(
+      this.http.get<BackendConversionFilesResponse>(`${this.baseUrl}/conversions/${jobId}/files`, {
+        headers: new HttpHeaders({
+          'X-API-KEY': environment.apiKey,
+        }),
+        params: queryParams,
+      }),
+    ).then((response) => ({
+      defaultFile: response.defaultFile ?? null,
+      manifest: (response.manifest ?? [])
+        .map((item) => (typeof item === 'string' ? item : item.path))
+        .filter((path): path is string => Boolean(path)),
+      skipped: this.mapSkipped(response.skipped ?? []),
+      files: response.files ?? [],
+    }));
+  }
+
+  private mapSkipped(items: BackendSkippedItem[]): SkippedFile[] {
+    return items
+      .map((item): SkippedFile | null => {
+        if (typeof item === 'string') {
+          return { path: item, reason: 'Skipped by backend' };
+        }
+        if (!item.path && !item.reason) {
+          return null;
+        }
+        return {
+          path: item.path ?? 'unknown',
+          reason: item.reason ?? 'Skipped by backend',
+        };
+      })
+      .filter((item): item is SkippedFile => item !== null);
   }
 
   private mapLanguageSelected(value: LanguageSelected): string {

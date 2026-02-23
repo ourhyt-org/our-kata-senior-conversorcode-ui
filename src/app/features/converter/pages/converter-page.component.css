@@ -162,21 +162,29 @@ a:focus-visible {
   display: flex;
   gap: 1rem;
   margin-top: 0.8rem;
+  align-items: center;
 }
 
 .links a {
   color: var(--accent-primary);
 }
 
-.inline-preview {
-  margin-top: 0.9rem;
-  display: grid;
-  grid-template-columns: minmax(220px, 0.9fr) minmax(0, 1.7fr);
-  gap: 0.7rem;
+.preview-btn {
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.55rem;
+  cursor: pointer;
 }
 
 .error {
   color: var(--danger);
+}
+
+.preview-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 @media (max-width: 1100px) {
@@ -186,9 +194,5 @@ a:focus-visible {
 
   .form-panel {
     grid-row: auto;
-  }
-
-  .inline-preview {
-    grid-template-columns: 1fr;
   }
 }

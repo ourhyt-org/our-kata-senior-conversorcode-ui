@@ -14,8 +14,7 @@ import { validateCodeRisk } from '../domain/code-risk.validator';
 import { ConverterFormValue } from '../domain/converter.models';
 import { getVersionsForTarget, TARGET_VERSION_POLICIES } from '../domain/version-policies';
 import { ConverterState } from '../state/converter.state';
-import { CodePreviewTabsComponent } from '../ui/code-preview-tabs.component';
-import { FileTreeComponent } from '../ui/file-tree.component';
+import { CodePreviewPanelComponent } from '../ui/code-preview-panel.component';
 import { HistoryPanelComponent } from '../ui/history-panel.component';
 import { HowItWorksPanelComponent } from '../ui/how-it-works-panel.component';
 import { StatusChipComponent } from '../ui/status-chip.component';
@@ -29,8 +28,7 @@ import { StatusChipComponent } from '../ui/status-chip.component';
     StatusChipComponent,
     HowItWorksPanelComponent,
     HistoryPanelComponent,
-    FileTreeComponent,
-    CodePreviewTabsComponent,
+    CodePreviewPanelComponent,
   ],
   templateUrl: './converter-page.component.html',
   styleUrl: './converter-page.component.css',
@@ -57,6 +55,7 @@ export class ConverterPageComponent {
   ];
 
   readonly riskErrors = signal<string[]>([]);
+  readonly previewOpen = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     languageSelected: ['COBOL' as LanguageSelected, [Validators.required]],
@@ -79,14 +78,6 @@ export class ConverterPageComponent {
   });
 
   readonly currentStatus = computed(() => this.converterState.result().status);
-  readonly selectedInlineFile = computed(() => {
-    const result = this.converterState.result();
-    if (!result.selectedFilePath) {
-      return null;
-    }
-    return result.inlineFiles.find((file) => file.path === result.selectedFilePath) ?? null;
-  });
-
   readonly codeLineNumbers = computed(() => {
     const code = this.form.controls.codeToConvert.value;
     const lineCount = Math.max(1, code.split('\n').length);
@@ -120,8 +111,12 @@ export class ConverterPageComponent {
     await this.converterState.retryLast();
   }
 
-  onSelectFile(path: string): void {
-    this.converterState.selectFile(path);
+  openPreview(): void {
+    this.previewOpen.set(true);
+  }
+
+  closePreview(): void {
+    this.previewOpen.set(false);
   }
 
   onViewHistory(jobId: string): void {

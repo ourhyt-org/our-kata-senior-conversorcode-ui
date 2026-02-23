@@ -84,6 +84,12 @@ export class ConverterState implements OnDestroy {
     await this.startConversion(request);
   }
 
+  async refreshJobStatus(jobId: string): Promise<ConversionStatus> {
+    const response = await this.api.getConversionStatus(jobId);
+    this.consumeStatusResponse(response);
+    return response.status;
+  }
+
   selectFile(path: string): void {
     this.resultSignal.update((current) => ({ ...current, selectedFilePath: path }));
   }

@@ -17,6 +17,10 @@ class FailingApi implements ConversionApi {
   async getConversionStatus(_: string): Promise<JobStatusResponse> {
     throw new Error('network');
   }
+
+  async getConversionFiles(): Promise<never> {
+    throw new Error('not-used');
+  }
 }
 
 describe('ConverterState', () => {

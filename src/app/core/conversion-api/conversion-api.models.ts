@@ -9,6 +9,23 @@ export interface InlineFile {
   content: string;
 }
 
+export interface ConversionFileContent {
+  path: string;
+  content: string;
+}
+
+export interface SkippedFile {
+  path: string;
+  reason: string;
+}
+
+export interface ConversionFilesResponse {
+  defaultFile: string | null;
+  manifest: string[];
+  skipped: SkippedFile[];
+  files?: ConversionFileContent[];
+}
+
 export interface CreateConversionRequest {
   languageSelected: LanguageSelected;
   languageTarget: LanguageTarget;
@@ -35,7 +52,16 @@ export interface JobStatusResponse {
   updatedAt: string;
 }
 
+export interface ConversionFilesParams {
+  includeContent?: boolean;
+  paths?: string[];
+}
+
 export interface ConversionApi {
   createConversion(req: CreateConversionRequest): Promise<CreateJobResponse>;
   getConversionStatus(jobId: string): Promise<JobStatusResponse>;
+  getConversionFiles(
+    jobId: string,
+    params?: ConversionFilesParams,
+  ): Promise<ConversionFilesResponse>;
 }
